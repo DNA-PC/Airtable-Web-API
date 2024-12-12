@@ -8,6 +8,11 @@ const API_KEY = 'patOvmYCU09qjXnbD.1eb2b6b8fcd2a9f3e45fb4835494cad3d9782f12fe731
 const airtable = new Airtable({ apiKey: API_KEY });
 const base = airtable.base(BASE_ID);
 
+// Generate dynamic folder with timestamp
+const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+const backupFolder = path.resolve(__dirname, 'backups', timestamp);
+fs.mkdirSync(backupFolder, { recursive: true });
+
 // Export schema
 async function fetchSchema() {
   const schemaUrl = `https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`;
@@ -21,7 +26,14 @@ async function fetchSchema() {
     throw new Error(`Failed to fetch schema: ${response.statusText}`);
   }
 
-  return response.json();
+  const schema = await response.json();
+
+  // Save schema to schema.json
+  const schemaFilePath = path.resolve(backupFolder, 'schema.json');
+  fs.writeFileSync(schemaFilePath, JSON.stringify(schema, null, 2));
+
+  console.log(`Schema exported to ${schemaFilePath}`);
+  return schema;
 }
 
 // Fetch data from all tables
@@ -33,17 +45,17 @@ async function exportData() {
     const tableName = table.name;
     const records = [];
 
-    let offset = 0;
+    let offset = 0; // Must be a number
 
     do {
       const response = await base(tableName).select({
-        view: "Grid view", // Adjust as needed
         offset: offset,
+        pageSize: 100,
       }).all();
 
       records.push(...response);
 
-      offset = response.offset;
+      offset = response.length === 100 ? response.offset : null;
     } while (offset);
 
     const formattedRecords = records.map((record) => ({
@@ -51,7 +63,7 @@ async function exportData() {
       ...record.fields,
     }));
 
-    const filePath = path.resolve(__dirname, `${tableName}.csv`);
+    const filePath = path.resolve(backupFolder, `${tableName}.csv`);
     const csvData = convertToCSV(formattedRecords);
 
     fs.writeFileSync(filePath, csvData);
@@ -74,7 +86,7 @@ function convertToCSV(data) {
 
 (async () => {
   try {
-    console.log('Fetching schema...');
+    console.log(`Exporting backup to ${backupFolder}...`);
     await exportData();
     console.log('Data export completed successfully.');
   } catch (error) {
