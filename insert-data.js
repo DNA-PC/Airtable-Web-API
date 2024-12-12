@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 
 const BASE_ID = 'apppvmEYnXEXlBqtp';
-const API_KEY = 'patOvmYCU09qjXnbD.1483e1c2f4ccc9f7d3178547175216cf6ad0c6d501f9273eef39fdd04f6d3064';
+const API_KEY = 'patOvmYCU09qjXnbD.1483e1c2f4ccc9f7d3178547175216cf6ad0c6d501f9273eef39fdd04f6d3064'; // FYI Nope, it's not valid anymore!
 const TABLE_NAME = 'People';
 
 // Static data as dataset
