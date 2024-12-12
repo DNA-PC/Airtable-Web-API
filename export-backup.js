@@ -51,11 +51,12 @@ async function exportData() {
       const response = await base(tableName).select({
         offset: offset,
         pageSize: 100,
-      }).all();
+      }).eachPage((pageRecords, fetchNextPage) => {
+        records.push(...pageRecords);
+        fetchNextPage();
+      });
 
-      records.push(...response);
-
-      offset = response.length === 100 ? response.offset : null;
+      offset = records.length % 100 === 0 ? records.length : null;
     } while (offset);
 
     const formattedRecords = records.map((record) => ({
@@ -63,12 +64,16 @@ async function exportData() {
       ...record.fields,
     }));
 
-    const filePath = path.resolve(backupFolder, `${tableName}.csv`);
+    // Save as CSV
+    const csvFilePath = path.resolve(backupFolder, `${tableName}.csv`);
     const csvData = convertToCSV(formattedRecords);
+    fs.writeFileSync(csvFilePath, csvData);
+    console.log(`Exported data for table ${tableName} to ${csvFilePath}`);
 
-    fs.writeFileSync(filePath, csvData);
-
-    console.log(`Exported data for table ${tableName} to ${filePath}`);
+    // Save as JSON
+    const jsonFilePath = path.resolve(backupFolder, `${tableName}.json`);
+    fs.writeFileSync(jsonFilePath, JSON.stringify(formattedRecords, null, 2));
+    console.log(`Exported data for table ${tableName} to ${jsonFilePath}`);
   }
 }
 
