@@ -5,7 +5,7 @@ const API_KEY = 'patOvmYCU09qjXnbD.1eb2b6b8fcd2a9f3e45fb4835494cad3d9782f12fe731
 const TABLE_NAME = 'People';
 
 // Static data as dataset
-const dataset = Array.from({ length: 35 }, (_, i) => ({
+const dataset = Array.from({ length: 301 }, (_, i) => ({
   id: `rec${i + 1}`,
   name: `Person ${i + 1}`,
   email: `person${i + 1}@example.com`,
@@ -51,7 +51,7 @@ async function upsertRecords() {
 async function deleteUnderageRecords() {
   const recordsToDelete = await base(TABLE_NAME)
     .select({
-      filterByFormula: 'age < 16',
+      filterByFormula: 'age < 1',
     })
     .all();
 
