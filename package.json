@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "airtable": "0.12.2"
+    "airtable": "0.12.2",
+    "axios": "1.7.9"
   }
 }
