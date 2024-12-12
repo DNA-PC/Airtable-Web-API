@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 
 const BASE_ID = 'apppvmEYnXEXlBqtp';
-const API_KEY = 'patOvmYCU09qjXnbD.1483e1c2f4ccc9f7d3178547175216cf6ad0c6d501f9273eef39fdd04f6d3064'; // FYI Nope, it's not valid anymore!
+const API_KEY = 'patOvmYCU09qjXnbD.1eb2b6b8fcd2a9f3e45fb4835494cad3d9782f12fe7314b4eb7edb14deccf4f5'; // FYI Nope, it's not valid anymore!
 const TABLE_NAME = 'People';
 
 // Static data as dataset
@@ -51,7 +51,7 @@ async function upsertRecords() {
 async function deleteUnderageRecords() {
   const recordsToDelete = await base(TABLE_NAME)
     .select({
-      filterByFormula: 'age < 18',
+      filterByFormula: 'age < 16',
     })
     .all();
 
