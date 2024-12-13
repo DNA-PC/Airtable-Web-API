@@ -1,9 +1,10 @@
+require('dotenv').config()
 const Airtable = require('airtable');
 const fs = require('fs');
 const path = require('path');
 
 const BASE_ID = 'apppvmEYnXEXlBqtp';
-const API_KEY = 'patOvmYCU09qjXnbD.11b59cf62e82b545ee7d0a4d082094fa04368a6dc56147f05c94e7f13a199e3e'; // FYI Nope, it's not valid anymore!
+const API_KEY = process.env.AIRTABLE_PAT;
 
 const airtable = new Airtable({ apiKey: API_KEY });
 const base = airtable.base(BASE_ID);
